@@ -1,0 +1,43 @@
+[tool]
+[tool.poetry]
+name = "manta"
+version = "1.6.3"
+description="Manta protocol components"
+authors = ["Alessandro Viganò <alvistar@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "==3.7"
+aiohttp = "*"
+cattrs = "*"
+certvalidator = "*"
+cryptography = "*"
+paho-mqtt = "*"
+requests = "*"
+simplejson = "*"
+
+[tool.poetry.dev-dependencies]
+aiohttp-swagger = "*"
+callee = "*"
+coverage = "*"
+inquirer = "*"
+nano-python = "*"
+pytest = "*"
+pytest-asyncio = "*"
+pytest-timeout = "*"
+sphinx = "*"
+sphinx-autodoc-typehints = {git = "https://github.com/agronholm/sphinx-autodoc-typehints.git"}
+sphinx-jsonschema = "*"
+sphinx-rtd-theme = "*"
+fastapi = "^0.55.1"
+uvicorn = "^0.11.5"
+typer = "^0.2.1"
+testcontainers = "^3.0.3"
+
+[tool.poetry.scripts]
+store_dummy = "manta.new_testing.store_dummy:run"
+wallet_dummy = "manta.new_testing.wallet_dummy:run"
+payproc_dummy = "manta.new_testing.payproc_dummy:run"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

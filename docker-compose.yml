@@ -1,0 +1,67 @@
+version: "3.8"
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    ports:
+      - 1883
+
+  wallet:
+    build: .
+    command: ["wallet_dummy"]
+    environment:
+      WALLET_TESTING: "true"
+      WALLET_HOST: 0.0.0.0
+    ports:
+      - 8082
+    expose:
+      - 8082
+    depends_on:
+      - mosquitto
+#    logging:
+#      driver: syslog
+#      options:
+#        syslog-address: "udp://192.168.20.160:10000"
+#        syslog-format: rfc5424
+#        tag: wallet
+
+  store:
+    build: .
+    command: ["store_dummy"]
+    environment:
+      BROKER_HOST: mosquitto
+      STORE_HOST: 0.0.0.0
+    depends_on:
+      - mosquitto
+    ports:
+      - 8080
+    expose:
+      - 8080
+#    logging:
+#      driver: syslog
+#      options:
+#        syslog-address: "udp://192.168.20.160:10000"
+#        syslog-format: rfc5424
+#        tag: store
+
+  payproc:
+    build: .
+    command: ["payproc_dummy"]
+    volumes:
+      - "./tests/certificates/root/keys/test.key:/keys/test.key"
+    depends_on:
+      - mosquitto
+    ports:
+      - 8081
+    expose:
+      - 8081
+    environment:
+      BROKER_HOST: mosquitto
+      PP_KEYFILE: /keys/test.key
+      PP_HOST: 0.0.0.0
+#    logging:
+#      driver: syslog
+#      options:
+#        syslog-address: "udp://192.168.20.160:10000"
+#        syslog-format: rfc5424
+#        tag: payproc
+
