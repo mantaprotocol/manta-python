@@ -52,6 +52,7 @@ class Wallet(MantaComponent):
           object
         session_id: :term:`session_id` of the ongoing session, if any
     """
+
     loop: asyncio.AbstractEventLoop
     connected: asyncio.Event
     port: int
@@ -68,7 +69,7 @@ class Wallet(MantaComponent):
         if the URL is invalid.
 
         Args:
-            url: manta url (ex. manta://developer.beappia.com/2848839943)
+            url: manta url (ex. manta://developer.mantaproto.com/2848839943)
 
         Returns:
             a new configured but unconnected instance
@@ -80,8 +81,9 @@ class Wallet(MantaComponent):
         else:
             return None
 
-    def __init__(self, url: str, session_id: str, host: str = "localhost",
-                 port: int = 1883):
+    def __init__(
+        self, url: str, session_id: str, host: str = "localhost", port: int = 1883
+    ):
         self.host = host
         self.port = port
         self.session_id = session_id
@@ -119,25 +121,29 @@ class Wallet(MantaComponent):
     @wrap_callback
     def on_message(self, client: mqtt.Client, userdata, msg):
         logger.info("New message {} on {}".format(msg.payload, msg.topic))
-        tokens = msg.topic.split('/')
+        tokens = msg.topic.split("/")
 
         if tokens[0] == "payment_requests":
             envelope = PaymentRequestEnvelope.from_json(msg.payload)
             assert self.payment_request_future is not None
-            self.loop.call_soon_threadsafe(self.payment_request_future.set_result, envelope)
+            self.loop.call_soon_threadsafe(
+                self.payment_request_future.set_result, envelope
+            )
         elif tokens[0] == "acks":
             ack = AckMessage.from_json(msg.payload)
             self.acks.put_nowait(ack)
         elif tokens[0] == "certificate":
             assert self.certificate_future is not None
-            self.loop.call_soon_threadsafe(self.certificate_future.set_result, msg.payload)
+            self.loop.call_soon_threadsafe(
+                self.certificate_future.set_result, msg.payload
+            )
 
     @staticmethod
     def parse_url(url: str) -> Optional[Match]:
         """
         Convenience method to check if Manta url is valid
         Args:
-            url: manta url (ex. manta://developer.beappia.com/2848839943)
+            url: manta url (ex. manta://developer.mantaproto.com/2848839943)
 
         Returns:
             A match object
@@ -172,7 +178,9 @@ class Wallet(MantaComponent):
         certificate = await self.certificate_future
         return x509.load_pem_x509_certificate(certificate, default_backend())
 
-    async def get_payment_request(self, crypto_currency: str = "all") -> PaymentRequestEnvelope:
+    async def get_payment_request(
+        self, crypto_currency: str = "all"
+    ) -> PaymentRequestEnvelope:
         """
         Get the :class:`~.messages.PaymentRequestMessage` for specific crypto
         currency, or ``all`` to obtain informations about all the supported
@@ -190,7 +198,9 @@ class Wallet(MantaComponent):
 
         self.payment_request_future = self.loop.create_future()
         self.mqtt_client.subscribe("payment_requests/{}".format(self.session_id))
-        self.mqtt_client.publish("payment_requests/{}/{}".format(self.session_id, crypto_currency))
+        self.mqtt_client.publish(
+            "payment_requests/{}/{}".format(self.session_id, crypto_currency)
+        )
 
         logger.info("Published payment_requests/{}".format(self.session_id))
 
@@ -209,9 +219,9 @@ class Wallet(MantaComponent):
         """
         await self.connect()
         message = PaymentMessage(
-            transaction_hash=transaction_hash,
-            crypto_currency=crypto_currency
+            transaction_hash=transaction_hash, crypto_currency=crypto_currency
         )
         self.mqtt_client.subscribe("acks/{}".format(self.session_id))
-        self.mqtt_client.publish("payments/{}".format(self.session_id),
-                                 message.to_json(), qos=1)
+        self.mqtt_client.publish(
+            "payments/{}".format(self.session_id), message.to_json(), qos=1
+        )

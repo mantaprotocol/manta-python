@@ -13,7 +13,7 @@ Communication takes advantage of the MQTT_ protocol and needs a
 proper configured broker to work.
 
 More documentation can be found at
-https://appiapay.github.io/manta-python, what follows are some
+https://mantaprotocol.github.io/manta-python, what follows are some
 instructions for the developer.
 
 .. _MQTT: http://mqtt.org
@@ -29,7 +29,7 @@ Primary repository
 To start working on ``manta-python`` you must first checkout a copy of the
 main repository::
 
- $ git git@github.com:appiapay/manta-python.git
+ $ git git@github.com:mantaprotocol/manta-python.git
  $ cd manta-python
 
 Requirements
