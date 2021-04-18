@@ -25,7 +25,7 @@ manta.wallet
 
      from manta.wallet import Wallet
 
-     wallet = Wallet.factory("manta://developer.beappia.com/774747")
+     wallet = Wallet.factory("manta://developer.mantaproto.com/774747")
 
    All the other operations are implemented as *coroutines* and so
    they need an *asyncio loop* to work correctly. The first operation

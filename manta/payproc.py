@@ -231,7 +231,7 @@ class PayProc(MantaComponent):
         Args:
             key_file: File name of PEM private key of Payment Processor. This
               will be used to sign messages
-            certificate: File name of Manta Certificate Authority, IE Appia
+            certificate: File name of Manta Certificate Authority, IE mantaproto
             host: MQTT Broker host
             starting_txid: Transaction ID are progressive, starting from the
               one specified

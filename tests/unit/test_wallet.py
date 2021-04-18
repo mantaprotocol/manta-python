@@ -10,8 +10,15 @@ from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from cryptography.x509 import NameOID
 import pytest
 
-from manta.messages import (Destination, PaymentRequestMessage, verify_chain,
-                            PaymentMessage, AckMessage, Status, Merchant)
+from manta.messages import (
+    Destination,
+    PaymentRequestMessage,
+    verify_chain,
+    PaymentMessage,
+    AckMessage,
+    Status,
+    Merchant,
+)
 from manta.wallet import Wallet
 
 # noinspection PyUnresolvedReferences
@@ -19,31 +26,23 @@ from tests.utils import JsonContains
 
 DESTINATIONS = [
     Destination(
-        amount=Decimal(5),
-        destination_address="btc_daddress",
-        crypto_currency="btc"
+        amount=Decimal(5), destination_address="btc_daddress", crypto_currency="btc"
     ),
     Destination(
-        amount=Decimal(10),
-        destination_address="nano_daddress",
-        crypto_currency="nano"
+        amount=Decimal(10), destination_address="nano_daddress", crypto_currency="nano"
     ),
-
 ]
 
-MERCHANT = Merchant(
-    name="Merchant 1",
-    address="5th Avenue"
-)
+MERCHANT = Merchant(name="Merchant 1", address="5th Avenue")
 
 PRIVATE_KEY = "certificates/root/keys/test.key"
 CERTIFICATE = "certificates/root/certs/test.crt"
-CA_CERTIFICATE = "certificates/root/certs/AppiaDeveloperCA.crt"
+CA_CERTIFICATE = "certificates/root/certs/DeveloperCA.crt"
 
 
 @pytest.fixture
 def payment_request():
-    with open(PRIVATE_KEY, 'rb') as myfile:
+    with open(PRIVATE_KEY, "rb") as myfile:
         key_data = myfile.read()
 
         key = load_pem_private_key(key_data, password=None, backend=default_backend())
@@ -53,8 +52,7 @@ def payment_request():
             amount=Decimal(10),
             fiat_currency="euro",
             destinations=DESTINATIONS,
-            supported_cryptos={'btc', 'xmr', 'nano'}
-
+            supported_cryptos={"btc", "xmr", "nano"},
         )
 
         return message.get_envelope(key)
@@ -82,7 +80,7 @@ def test_factory(mock_mqtt):
 
 @pytest.mark.asyncio
 async def test_get_certificate(mock_mqtt):
-    with open(CERTIFICATE, 'rb') as myfile:
+    with open(CERTIFICATE, "rb") as myfile:
         pem = myfile.read()
 
     def se(topic):
@@ -99,7 +97,10 @@ async def test_get_certificate(mock_mqtt):
     certificate = await wallet.get_certificate()
 
     mock_mqtt.subscribe.assert_called_with("certificate")
-    assert "test" == certificate.subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value
+    assert (
+        "test"
+        == certificate.subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value
+    )
 
 
 @pytest.mark.timeout(2)
@@ -123,16 +124,14 @@ async def test_get_payment_request(mock_mqtt, payment_request, caplog):
     assert envelope.unpack() == payment_request.unpack()
     assert envelope.verify(CERTIFICATE)
 
+
 @pytest.mark.asyncio
 async def test_send_payment(mock_mqtt):
     wallet = Wallet.factory("manta://localhost:8000/123")
 
     await wallet.send_payment(transaction_hash="myhash", crypto_currency="nano")
 
-    expected = PaymentMessage(
-        transaction_hash="myhash",
-        crypto_currency="nano"
-    )
+    expected = PaymentMessage(transaction_hash="myhash", crypto_currency="nano")
 
     mock_mqtt.subscribe.assert_called_with("acks/123")
     mock_mqtt.publish.assert_called_with("payments/123", JsonContains(expected), qos=1)
@@ -142,11 +141,7 @@ async def test_send_payment(mock_mqtt):
 async def test_on_ack(mock_mqtt):
     wallet = Wallet.factory("manta://localhost:8000/123")
 
-    expected = AckMessage(
-        txid="0",
-        transaction_hash="myhash",
-        status=Status.PENDING
-    )
+    expected = AckMessage(txid="0", transaction_hash="myhash", status=Status.PENDING)
 
     mock_mqtt.push("acks/123", expected.to_json())
 
@@ -161,7 +156,7 @@ def test_verify_chain():
 
 
 def test_verify_chain_str():
-    with open(CERTIFICATE, 'r') as myfile:
+    with open(CERTIFICATE, "r") as myfile:
         pem = myfile.read()
 
     path = verify_chain(pem, CA_CERTIFICATE)

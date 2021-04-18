@@ -84,7 +84,7 @@ HELLO_SIGNED = (
 )
 
 KEY_FILENAME = "certificates/root/keys/test.key"
-CERTIFICATE_FILENAME = "certificates/root/certs/AppiaDeveloperCA.crt"
+CERTIFICATE_FILENAME = "certificates/root/certs/DeveloperCA.crt"
 
 DESTINATIONS = [
     Destination(
