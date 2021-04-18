@@ -2,18 +2,12 @@
 # Manta Protocol Implementation for Python
 # Copyright (C) 2018-2019 Alessandro Viganò
 
-import asyncio
-import os
-import socket
-from dataclasses import dataclass
-from decimal import Decimal
 import logging
 
 import pytest
 import requests
-from testcontainers.compose import DockerCompose
 
-from manta.messages import PaymentRequestEnvelope, Status
+from manta.messages import Status
 from manta.wallet import Wallet
 
 logging.basicConfig(level=logging.INFO)
