@@ -85,6 +85,11 @@ def get_status():
     return StatusResponse(status=status)
 
 
+@app.get("/healthcheck", response_model=str)
+async def healthcheck():
+    return "ok"
+
+
 def main(
     host: str = typer.Option("127.0.0.1", envvar="STORE_HOST", show_envvar=True),
     port: int = typer.Option(8080, envvar="STORE_PORT", show_envvar=True),
