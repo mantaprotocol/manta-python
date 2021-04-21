@@ -25,6 +25,9 @@ RUN pip install /install
 
 FROM python:3.7-slim-buster
 
+# curl for healthcheck
+RUN apt update && apt -y install curl && apt clean
+
 # venv
 COPY --from=build /venv /venv
 
