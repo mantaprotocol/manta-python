@@ -2,27 +2,34 @@
 # Manta Protocol Implementation for Python
 # Copyright (C) 2018-2019 Alessandro Viganò
 import asyncio
+import logging
 import os
 from asyncio import Task
 from decimal import Decimal
-import logging
-import traceback
-from typing import Optional, Dict, Any, Type, get_type_hints
+from typing import Optional
 
 import typer
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from starlette.background import BackgroundTasks
 
 import manta.new_testing.messages_pyd as pyd
-from manta.messages import AckMessage, Status
+from manta.messages import Status
 from manta.new_testing.pyd_decimal_config import DecimalConfig
-
 from manta.store import Store
 
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+# Cors setup
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"],
+)
+
 store: Optional[Store] = None
 status: Optional[Status] = None
 update_task: Optional[Task] = None

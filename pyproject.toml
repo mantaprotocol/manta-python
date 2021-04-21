@@ -26,7 +26,7 @@ sphinx = "*"
 sphinx-autodoc-typehints = {git = "https://github.com/agronholm/sphinx-autodoc-typehints.git"}
 sphinx-jsonschema = "*"
 sphinx-rtd-theme = "*"
-fastapi = "^0.55.1"
+fastapi = "^0.63.0"
 uvicorn = "^0.11.5"
 typer = "^0.2.1"
 testcontainers = "^3.0.3"
