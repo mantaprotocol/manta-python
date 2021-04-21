@@ -110,6 +110,11 @@ async def confirm(request: ConfirmationRequest):
     return "ok"
 
 
+@app.get("/healthcheck", response_model=str)
+async def healthcheck():
+    return "ok"
+
+
 def main(
     host: str = typer.Option("127.0.0.1", envvar="PP_HOST", show_envvar=True),
     port: int = typer.Option(8081, envvar="PP_PORT", show_envvar=True),
